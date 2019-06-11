@@ -7,13 +7,12 @@ result includes:
     what alliance they play in that match
     when your team has a match with them
 """
-from __future__ import print_function
-import pandas as pd
-import numpy as np
-
+from openpyxl.styles import *
+import openpyxl
 import requests
 import json
 import sys
+import Constants
 
 
 def get_matches(team_id, event_id):
@@ -101,28 +100,63 @@ for team in last_match.keys():
             if data[i].get("comp_level") != "qm":
                 continue
 
-            # get rid of "frc" in front
-            x = split(team)
-            team_no = x[3] + x[4]
-            if len(x) == 6:
-                team_no += x[5]
-            if len(x) == 7:
-                team_no += x[5] + x[6]
-
             if team in data[i].get("alliances").get("blue").get("team_keys"):
                 alliance = "blue"
             else:
                 alliance = "red"
 
             if matches_to_watch.get(data[i].get("match_number")) is None:
-                matches_to_watch[data[i].get("match_number")] = [[team_no, alliance]]
+                matches_to_watch[data[i].get("match_number")] = [[team, alliance]]
             else:
-                matches_to_watch[data[i].get("match_number")].append([team_no, alliance])
+                matches_to_watch[data[i].get("match_number")].append([team, alliance])
 print("\nMatches to watch")
 for key in sorted(matches_to_watch.keys()):
     print("%s: %s" % (key, matches_to_watch[key]))
 
 # make end product pretty
 
-# make excel file
+# create excel file
+wb = openpyxl.Workbook("Alliance Partner Matches.xlsx")
+sheet = wb.active
+sheet.title = "Matches"
+sheet["A1"] = "Qualification Match:"
+sheet["B1"] = "Blue Alliance"
+sheet["C1"] = "Red Alliance"
+sheet.column_dimensions["B"].width = Constants.col_width
+row = 1
+for match in matches_to_watch.keys():
+    row += 1
+    sheet["A" + str(row)] = match
+    # TODO sort value into ascending order based on what match they play with your team
+    red_teams = ""
+    blue_teams = ""
+    for value in matches_to_watch.get(match):
+        # get rid of "frc" in front
+        x = split(value[0])
+        team_no = x[3] + x[4]
+        if len(x) == 6:
+            team_no += x[5]
+        if len(x) == 7:
+            team_no += x[5] + x[6]
 
+        thing = ""
+        if "red" in value:
+            if red_teams != "":
+                thing += ", " + team_no + " (" + str(last_match.get(value[0])) + ")"
+            else:
+                thing = team_no + " (" + str(last_match.get(value[0])) + ")"
+            red_teams += thing
+        else:
+            if blue_teams != "":
+                thing += ", " + team_no + " (" + str(last_match.get(value[0])) + ")"
+            else:
+                thing = team_no + " (" + str(last_match.get(value[0])) + ")"
+            blue_teams += thing
+
+    sheet["B" + str(row)] = blue_teams
+    sheet["C" + str(row)] = red_teams
+    sheet["B" + str(row)].fill = PatternFill(start_color=Constants.b_color)
+    sheet["C" + str(row)].fill = PatternFill(start_color=Constants.r_color)
+    wb.save("Alliance Partner Matches.xlsx")
+print("Your Excel sheet has been generated!")
+directory = input("Please enter the directory of the folder you would like to save it in: ")
