@@ -7,6 +7,9 @@ result includes:
     what alliance they play in that match
     when your team has a match with them
 """
+from __future__ import print_function
+import pandas as pd
+import numpy as np
 
 import requests
 import json
@@ -80,9 +83,9 @@ with open("json/matches.json", "r") as match_data:
         for j in range(2):
             last_match[disposable[j]] = match
         prev_match = match
-print("Last matches:")
-for key in sorted(last_match.keys()):
-    print("%s: %s" % (key, last_match[key]))
+# print("Last matches:")
+# for key in sorted(last_match.keys()):
+#     print("%s: %s" % (key, last_match[key]))
 
 
 # get alliance member matches
@@ -106,12 +109,20 @@ for team in last_match.keys():
             if len(x) == 7:
                 team_no += x[5] + x[6]
 
-            if matches_to_watch.get(data[i].get("match_number")) is None:
-                matches_to_watch[data[i].get("match_number")] = [team_no]
+            if team in data[i].get("alliances").get("blue").get("team_keys"):
+                alliance = "blue"
             else:
-                matches_to_watch[data[i].get("match_number")].append(team_no)
+                alliance = "red"
+
+            if matches_to_watch.get(data[i].get("match_number")) is None:
+                matches_to_watch[data[i].get("match_number")] = [[team_no, alliance]]
+            else:
+                matches_to_watch[data[i].get("match_number")].append([team_no, alliance])
 print("\nMatches to watch")
 for key in sorted(matches_to_watch.keys()):
     print("%s: %s" % (key, matches_to_watch[key]))
 
 # make end product pretty
+
+# make excel file
+
