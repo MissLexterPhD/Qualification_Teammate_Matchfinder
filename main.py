@@ -7,156 +7,32 @@ result includes:
     what alliance they play in that match
     when your team has a match with them
 """
-from openpyxl.styles import *
-import openpyxl
-import requests
-import json
-import sys
 import Constants
 
+from Processes import GetUserInput, TBA_API_stuff, CreateSpreadsheet
 
-def get_matches(team_id, event_id):
-    return requests.get(url=(url + "/team/" + team_id + "/event/" + event_id + "/matches"), headers=header).json()
+a = GetUserInput.get_users_input()
+team_key = a[0]
+token = a[1]
+url = Constants.url
+header = a[2]
+year = Constants.year
 
+b = GetUserInput.get_spreadsheet_dir()
+directory = b[0]
+spreadsheet = b[1]
 
-def split(string):
-    return [char for char in string]
+TBA_API_stuff.dump_team_event_data(team_key, header)
 
+event_key = TBA_API_stuff.choose_event()
 
-team_key = "frc" + input("Please enter your team number: ").rstrip() # TODO ensure team number being entered is valid
-# token = input("Please input your TBA access token ")
-token = "uhjNJsj6DFYBJGCDcR4FReJcWXKlRcza6B0VOaijKH5SLkJrurTso1Yg2GERUPer"
-url = "https://www.thebluealliance.com/api/v3"
-year = "2019"
-header = {"X-TBA-Auth-Key": token}
+TBA_API_stuff.dump_team_matches_at_event(team_key, event_key, header)
 
+last_match = TBA_API_stuff.get_qual_alliance(team_key)
 
-# Get data from TBA API\
-try:
-    with open("json/events.json", "w") as events:
-        json.dump(fp=events, obj=requests.get(url=(url+"/team/"+team_key+"/events/"+year), headers=header).json(), indent=4)
-except requests.exceptions.RequestException as e:
-    print(e)
-    sys.exit(1)
+matches_to_watch = TBA_API_stuff.get_teammate_matches(event_key, last_match, header)
 
+CreateSpreadsheet.make_pretty_spreadsheet(last_match, matches_to_watch, spreadsheet, directory)
 
-# generate list of events
-event_key = ""
-try:
-    with open("json/events.json", "r") as events:
-        data = json.load(events)
-        for i in range(len(data)):
-            print(str(i+1) + ".")
-            print("\tEvent name: " + data[i].get("name") +
-                  "\n\tLocation: " + data[i].get("address"))
-        event = int(input("\nWhich event would you like to use? ")) - 1
-        event_key = data[event].get("key")
-except FileNotFoundError:
-    print("Event data not found")
-    sys.exit(1)
-
-
-# Go through matches and stuff
-try:
-    with open("json/matches.json", "w") as matches:
-        json.dump(fp=matches, obj=get_matches(team_key, event_key), indent=4)
-except requests.exceptions.RequestException as e:
-    print(e)
-    sys.exit(1)
-
-
-# finds alliance partners
-last_match = {}
-prev_match = 0
-with open("json/matches.json", "r") as match_data:
-    data = json.load(match_data)
-    for i in range(len(data)):
-        if data[i].get("comp_level") != "qm":
-            continue
-        if team_key in data[i].get("alliances").get("blue").get("team_keys"):
-            disposable = data[i].get("alliances").get("blue").get("team_keys")
-        else:
-            disposable = data[i].get("alliances").get("red").get("team_keys")
-        disposable.remove(team_key)
-        match = data[i].get("match_number")
-        for j in range(2):
-            last_match[disposable[j]] = match
-        prev_match = match
-# print("Last matches:")
-# for key in sorted(last_match.keys()):
-#     print("%s: %s" % (key, last_match[key]))
-
-
-# get alliance member matches
-matches_to_watch = {}
-for team in last_match.keys():
-    with open("json/teammate_matches.json", "w") as match_data:
-        json.dump(fp=match_data, obj=get_matches(team, event_key), indent=4)
-    with open("json/teammate_matches.json", "r") as match_data:
-        data = json.load(match_data)
-        for i in range(len(data)):
-            if data[i].get("match_number") == last_match.get(team):
-                break
-            if data[i].get("comp_level") != "qm":
-                continue
-
-            if team in data[i].get("alliances").get("blue").get("team_keys"):
-                alliance = "blue"
-            else:
-                alliance = "red"
-
-            if matches_to_watch.get(data[i].get("match_number")) is None:
-                matches_to_watch[data[i].get("match_number")] = [[team, alliance]]
-            else:
-                matches_to_watch[data[i].get("match_number")].append([team, alliance])
-print("\nMatches to watch")
-for key in sorted(matches_to_watch.keys()):
-    print("%s: %s" % (key, matches_to_watch[key]))
-
-# make end product pretty
-
-# create excel file
-wb = openpyxl.Workbook("Alliance Partner Matches.xlsx")
-sheet = wb.active
-sheet.title = "Matches"
-sheet["A1"] = "Qualification Match:"
-sheet["B1"] = "Blue Alliance"
-sheet["C1"] = "Red Alliance"
-sheet.column_dimensions["B"].width = Constants.col_width
-row = 1
-for match in matches_to_watch.keys():
-    row += 1
-    sheet["A" + str(row)] = match
-    # TODO sort value into ascending order based on what match they play with your team
-    red_teams = ""
-    blue_teams = ""
-    for value in matches_to_watch.get(match):
-        # get rid of "frc" in front
-        x = split(value[0])
-        team_no = x[3] + x[4]
-        if len(x) == 6:
-            team_no += x[5]
-        if len(x) == 7:
-            team_no += x[5] + x[6]
-
-        thing = ""
-        if "red" in value:
-            if red_teams != "":
-                thing += ", " + team_no + " (" + str(last_match.get(value[0])) + ")"
-            else:
-                thing = team_no + " (" + str(last_match.get(value[0])) + ")"
-            red_teams += thing
-        else:
-            if blue_teams != "":
-                thing += ", " + team_no + " (" + str(last_match.get(value[0])) + ")"
-            else:
-                thing = team_no + " (" + str(last_match.get(value[0])) + ")"
-            blue_teams += thing
-
-    sheet["B" + str(row)] = blue_teams
-    sheet["C" + str(row)] = red_teams
-    sheet["B" + str(row)].fill = PatternFill(start_color=Constants.b_color)
-    sheet["C" + str(row)].fill = PatternFill(start_color=Constants.r_color)
-    wb.save("Alliance Partner Matches.xlsx")
 print("Your Excel sheet has been generated!")
-directory = input("Please enter the directory of the folder you would like to save it in: ")
+print("Alliance Partner Matches has been saved to: " + directory)
