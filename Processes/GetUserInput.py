@@ -1,10 +1,14 @@
 import openpyxl
+import Constants
 
 
 def get_users_input():
-    team_key = "frc" + input("Please enter your team number: ").rstrip() # TODO ensure team number being entered is valid
+    team_key = "frc" + input("Please enter your team number: ").rstrip()  # TODO ensure team number being entered is valid
     # token = input("Please input your TBA access token ")
-    token = "uhjNJsj6DFYBJGCDcR4FReJcWXKlRcza6B0VOaijKH5SLkJrurTso1Yg2GERUPer"
+    if Constants.token == "":
+        token = input("Please enter your 'The Blue Alliance' developer token: ")
+    else:
+        token = Constants.token
     header = {"X-TBA-Auth-Key": token}
     return [team_key, token, header]
 

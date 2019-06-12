@@ -2,6 +2,11 @@
 Stores constants for use in the main script
 """
 
+# Misc.
+url = "https://www.thebluealliance.com/api/v3"
+year = "2019"
+token = ""
+
 # Color codes
 r_color = "FF0000"
 b_color = "002BFF"
@@ -14,5 +19,3 @@ border_color = "000000"
 qual_col_width = 6
 col_width = 25
 
-url = "https://www.thebluealliance.com/api/v3"
-year = "2019"
