@@ -41,7 +41,7 @@ def dump_team_matches_at_event(team_key, event_key, header):
         sys.exit(1)
 
 
-def get_qual_alliance(team_key):
+def get_qual_alliance_partners(team_key):
     last_match = {}
     with open("json/matches.json", "r") as match_data:
         data = json.load(match_data)

@@ -28,7 +28,7 @@ event_key = TBA_API_stuff.choose_event()
 
 TBA_API_stuff.dump_team_matches_at_event(team_key, event_key, header)
 
-last_match = TBA_API_stuff.get_qual_alliance(team_key)
+last_match = TBA_API_stuff.get_qual_alliance_partners(team_key)
 
 matches_to_watch = TBA_API_stuff.get_teammate_matches(event_key, last_match, header)
 

@@ -7,6 +7,9 @@ def split(string):
 
 
 def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
+    """
+    Exactly what the function name says
+    """
     sheet = wb.active
     sheet.title = "Matches"
     sheet["A1"] = "Qual:"
