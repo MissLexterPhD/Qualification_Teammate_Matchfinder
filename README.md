@@ -1,12 +1,15 @@
-#Qualification Teammates Matchfinder
+**Qualification Teammate Matchfinder**
+=======================================
 
-##What is this bot for?
+**What is this bot for?**
+-------------------------
 You can use this bot to generate a spreadsheet of the matches your teammates in all of your 
 Qualification matches will be playing in
 
 This bot was made to help teams find issues with their future alliance partners before their match(es) together.
 
-##The final spreadsheet will contain:
+**The final spreadsheet will contain:**
+---------------------------------------
 
     1. Which matches to watch
     2. Which teams to watch during the match
@@ -15,7 +18,8 @@ This bot was made to help teams find issues with their future alliance partners 
     5. Colors!
 
 
-##**Setup Instructions:**
+**Setup Instructions:**
+------------------------
 
     1. Create a "The Blue Alliance" token (you can skip ahead if you already have one):
         a) Create an account on ["The Blue Alliance"](https://thebluealliance.com)
