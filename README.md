@@ -22,13 +22,13 @@ This bot was made to help teams find issues with their future alliance partners 
 ------------------------
 
     1. Create a "The Blue Alliance" token (you can skip ahead if you already have one):
-        a) Create an account on ["The Blue Alliance"](https://thebluealliance.com)
-        b) Go to your [account information](https://thebluealliance.com/account) 
-           and create a developer token under "Read API Keys." You can call your keyu 
+        a) Create an account on "The Blue Alliance" (thebluealliance.com)
+        b) Go to your account information (thebluealliance.com/account) 
+           and create a developer token under "Read API Keys." You can call your key 
            whatever you like
            
-    2. Install the necessary modules
-        a) Install [python 3](https://www.python.org/downloads/) if you haven't already (you need it to run this bot)
+    2. Install stuff:
+        a) Install python 3 (python.org/downloads) if you haven't already (you need it to run this bot)
         b) Use pip to install the following modules (enter "pip install *name of module*" in command prompt)
             i.   "openpyxl"
             ii.  "requests"
