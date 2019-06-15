@@ -11,10 +11,12 @@ def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
     Exactly what the function name says
     """
     sheet = wb.active
+
     sheet.title = "Matches"
     sheet["A1"] = "Qual:"
     sheet["B1"] = "Blue Alliance"
     sheet["C1"] = "Red Alliance"
+
     sheet.column_dimensions["A"].width = Constants.qual_col_width
     sheet.column_dimensions["B"].width = Constants.col_width
     sheet.column_dimensions["C"].width = Constants.col_width
@@ -27,6 +29,7 @@ def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
     r_highlight.border = Border(left=bd, top=bd, right=bd, bottom=bd)
     wb.add_named_style(b_highlight)
     wb.add_named_style(r_highlight)
+
     row = 1
     for match in sorted(matches_to_watch.keys()):
         row += 1
