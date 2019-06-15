@@ -5,7 +5,6 @@ Stores constants for use in the main script
 # Misc.
 url = "https://www.thebluealliance.com/api/v3"
 year = "2019"
-token = ""
 
 # Color codes
 r_color = "FF0000"
