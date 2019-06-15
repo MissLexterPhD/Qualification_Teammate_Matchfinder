@@ -37,7 +37,9 @@ def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
         for value in matches_to_watch.get(match):
             # get rid of "frc" in front
             x = split(value[0])
-            team_no = x[3] + x[4]
+            team_no = x[3]
+            if len(x) == 5:
+                team_no += x[4]
             if len(x) == 6:
                 team_no += x[5]
             if len(x) == 7:
