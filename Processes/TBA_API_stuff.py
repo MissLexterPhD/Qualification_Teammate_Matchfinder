@@ -11,7 +11,9 @@ def get_matches(team_id, event_id, header):
 def dump_team_event_data(team_key, header):
     try:
         with open("json/events.json", "w") as events:
-            json.dump(fp=events, obj=requests.get(url=(Constants.url+"/team/"+team_key+"/events/"+Constants.year), headers=header).json(), indent=4)
+            response = requests.get(url=(Constants.url+"/team/"+team_key+"/events/"+Constants.year), headers=header)
+            json.dump(fp=events, obj=response.json(), indent=4)
+            return response
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)

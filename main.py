@@ -13,9 +13,8 @@ from Processes import GetUserInput, TBA_API_stuff, CreateSpreadsheet
 
 a = GetUserInput.get_users_input()
 team_key = a[0]
-Constants.token = a[1]
 url = Constants.url
-header = a[2]
+header = a[1]
 year = Constants.year
 
 b = GetUserInput.get_spreadsheet_dir()
