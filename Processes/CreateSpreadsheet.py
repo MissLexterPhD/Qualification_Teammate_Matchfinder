@@ -2,10 +2,6 @@ from openpyxl.styles import *
 import Constants
 
 
-def split(string):
-    return [char for char in string]
-
-
 def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
     """
     Exactly what the function name says
@@ -39,14 +35,14 @@ def make_pretty_spreadsheet(last_match, matches_to_watch, wb, directory):
         blue_teams = ""
         for value in matches_to_watch.get(match):
             # get rid of "frc" in front
-            x = split(value[0])
+            x = list(value[0])
             team_no = x[3]
-            if len(x) == 5:
+            if len(x) >= 5:
                 team_no += x[4]
-            if len(x) == 6:
+            if len(x) >= 6:
                 team_no += x[5]
             if len(x) == 7:
-                team_no += x[5] + x[6]
+                team_no += x[6]
 
             thing = ""
             if "red" in value:

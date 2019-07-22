@@ -22,17 +22,13 @@ def get_users_input():
     return [team_key, header]
 
 
-def split(string):
-    return [char for char in string]
-
-
 def get_spreadsheet_dir():
     # create excel file
     wb = openpyxl.Workbook()
     while 1:
         directory = input("Please enter the directory where you would like to save your final spreadsheet: ")
         try:
-            x = split(directory)
+            x = list(directory)
             if x[-1] == "\\" or x[-1] == "/":
                 directory = directory + "Alliance Partner Matches.xlsx"
                 wb.save(directory)
